@@ -113,41 +113,107 @@
 
 
     // 👉 CHALLENGE 2
-    function mineSweeper() {
-      // 🧠 mineSweeper takes a grid as its first argument, and coordinates x and y as the second and third args
-      //  The grid is an array of arrays in the following format: [["🟥","🟦","🟥"],["🟦","🟥","🟥"],["🟥","🟦","🟦"]]
-      //  Each subarray is a row of the grid, the first subarray being the top row:
-      //  [
-      //    ["🟥", "🟦", "🟥"],
-      //    ["🟦", "🟥", "🟥"],
-      //    ["🟥", "🟦", "🟦"]
-      //  ]
-      // The subarrays can contain any mix of red and blue squares
-      // The coordinates x and y are numbers: either 1 or 2 or 3
-      //    * An x = 1 and y = 1 means the top-left square
-      //    * An x = 3 and y = 1 means the top-right square
-      //    * An x = 3 and y = 3 means the bottom-right square
-      //  Red squares are mines and blue squares are safe
-      //    * If mineSweeper is called with such coordinates that the player lands on red, return the string "🟥 💀"
-      //    * If the player lands on blue, return the string "🟦 🥳"
-      // 🧠 Edge cases:
-      //    * If the x or y coordinates are under 1 or over 3, return the string "invalid coordinates"
+    // 🧠 mineSweeper takes a grid as its first argument, and coordinates x and y as the second and third args
+    //  The grid is an array of arrays in the following format: [["🟥","🟦","🟥"],["🟦","🟥","🟥"],["🟥","🟦","🟦"]]
+    //  Each subarray is a row of the grid, the first subarray being the top row:
+    //  [
+    //    ["🟥", "🟦", "🟥"],
+    //    ["🟦", "🟥", "🟥"],
+    //    ["🟥", "🟦", "🟦"]
+    //  ]
+    // The subarrays can contain any mix of red and blue squares
+    // The coordinates x and y are numbers: either 1 or 2 or 3
+    //    * An x = 1 and y = 1 means the top-left square
+    //    * An x = 3 and y = 1 means the top-right square
+    //    * An x = 3 and y = 3 means the bottom-right square
+    //  Red squares are mines and blue squares are safe
+    //    * If mineSweeper is called with such coordinates that the player lands on red, return the string "🟥 💀"
+    //    * If the player lands on blue, return the string "🟦 🥳"
+    // 🧠 Edge cases:
+    //    * If the x or y coordinates are under 1 or over 3, return the string "invalid coordinates"
+
+    function mineSweeper(grid, x, y) {
+
+      if (x < 1 || x > 3 || y < 1 || y > 3) {
+        return "invalid coordinates";
+      }
+
+
+      if (grid[y - 1][x - 1] === "🟥") {
+        return "🟥 💀";
+      }
+
+
+      const positions = [
+        { dx: -1, dy: -1 }, { dx: 0, dy: -1 }, { dx: 1, dy: -1 },
+        { dx: -1, dy: 0 }, { dx: 1, dy: 0 },
+        { dx: -1, dy: 1 }, { dx: 0, dy: 1 }, { dx: 1, dy: 1 },
+      ];
+
+
+      let numMines = 0;
+      for (const position of positions) {
+        const newX = x + position.dx;
+        const newY = y + position.dy;
+
+        if (newX >= 1 && newX <= 3 && newY >= 1 && newY <= 3 && grid[newY - 1][newX - 1] === "🟥") {
+          numMines++;
+        }
+      }
+
+
+      if (numMines === 6 || numMines < 6) {
+        return "🟦 🥳";
+      } else {
+        return `${numMines}`;
+      }
     }
+
+
+
+
+
+
+
+
 
     // 👉 CHALLENGE 3
-    function booleanize() {
-      // 🧠 booleanize takes an object as its single argument, which can have any number of properties
-      // Loop over the properties and then return the object, after applying the following transformations:
-      //    * If a value is the number zero, it must be transformed into the Boolean false
-      //    * If a value is the number one, it must be transformed into the Boolean true
-      //    * If a value is null, the whole key-value pair must be deleted from the object
-      // 🧠 Edge cases:
-      //    * If a property name exceeds 9 characters, return the string "shorten all prop names to 9 chars or less"
-      // 🌟 HINT: careful not to perform any unintended changes on the object
+
+    // 🧠 booleanize takes an object as its single argument, which can have any number of properties
+    // Loop over the properties and then return the object, after applying the following transformations:
+    //    * If a value is the number zero, it must be transformed into the Boolean false
+    //    * If a value is the number one, it must be transformed into the Boolean true
+    //    * If a value is null, the whole key-value pair must be deleted from the object
+    // 🧠 Edge cases:
+    //    * If a property name exceeds 9 characters, return the string "shorten all prop names to 9 chars or less"
+    // 🌟 HINT: careful not to perform any unintended changes on the object
+
+    function booleanize(object) {
+
+      if (Object.keys(object).some(key => key.length > 9)) {
+        return "shorten all prop names to 9 chars or less";
+      }
+
+
+      const newObject = {};
+
+
+      for (const [key, value] of Object.entries(object)) {
+        if (value === 0) {
+          newObject[key] = false;
+        } else if (value === 1) {
+          newObject[key] = true;
+        } else if (value !== null) {
+          newObject[key] = value;
+        }
+      }
+
+      return newObject;
     }
 
+
     // 👉 CHALLENGE 4
-    function scrub() {
+    function scrub(text, forbidden) {
       // 🧠 scrub takes a string "text" as its first argument, and an array of forbidden words "forbidden" as its second
       // Any word in the text included in the array of forbidden words is replaced with a word of equal length but made of lowcase "x"
       // The scrubbed text is then returned from the function, as seen in the examples below
@@ -159,32 +225,92 @@
       //    scrub("aces high", ["high", "aces", "hearts"]) // returns "xxxx xxxx"
       //    scrub("", ["high", "aces""]) // returns ""
       // 🌟 HINT: useful array methods to use are `push`, `indexOf`, `split`, `join`
+
+
+      if (!Array.isArray(forbidden)) forbidden = [];
+
+      const words = text.toLowerCase().split(" ");
+      const scrubbedWords = [];
+
+      for (const word of words) {
+        if (forbidden.includes(word)) {
+          scrubbedWords.push("".padEnd(word.length, "x"));
+        } else {
+          scrubbedWords.push(word);
+        }
+      }
+
+      return scrubbedWords.join(" ");
+
+
+
     }
 
     // 👉 CHALLENGE 5
-    function normalizePhoneNumber() {
-      // 🧠 normalizePhoneNumber takes a string as its only argument, representing a ten-digit number
-      // The function returns a string formatted as seen below
-      // 🧠 Examples of usage:
-      // normalizePhoneNumber("9876543210") // returns "(987) 654-3210"
-      // normalizePhoneNumber("1111111111") // returns "(111) 111-1111"
-      // 🧠 Edge cases:
-      //   * If the argument is of an incorrect length, return the string "type a 10-digit number"
-      //   * If the argument is of the correct length but any character is not an integer between 0 and 9, return "invalid phone number"
-      // 🌟 HINT: instead of looping over the number's digits, loop backwards over a template "(XXX) XXX-XXXX"
-      // 🌟 HINT: at each iteration, if the current character is an "X", replace it with the result of popping a digit from the number
-      // 🌟 HINT: if you'd rather loop forwards, use `shift` instead of `pop`
+
+
+    // 🧠 normalizePhoneNumber takes a string as its only argument, representing a ten-digit number
+    // The function returns a string formatted as seen below
+    // 🧠 Examples of usage:
+    // normalizePhoneNumber("9876543210") // returns "(987) 654-3210"
+    // normalizePhoneNumber("1111111111") // returns "(111) 111-1111"
+    // 🧠 Edge cases:
+    //   * If the argument is of an incorrect length, return the string "type a 10-digit number"
+    //   * If the argument is of the correct length but any character is not an integer between 0 and 9, return "invalid phone number"
+    // 🌟 HINT: instead of looping over the number's digits, loop backwards over a template "(XXX) XXX-XXXX"
+    // 🌟 HINT: at each iteration, if the current character is an "X", replace it with the result of popping a digit from the number
+    // 🌟 HINT: if you'd rather loop forwards, use `shift` instead of `pop`
+
+    function normalizePhoneNumber(number) {
+
+      if (number.length !== 10) return "type a 10-digit number";
+
+
+      if (!/^\d+$/.test(number)) return "invalid phone number";
+
+
+      let template = "(XXX) XXX-XXXX";
+
+
+      for (let i = 0; i < number.length; i++) {
+        template = template.replace("X", number[i]);
+      }
+
+      return template;
     }
 
+
     // 👉 CHALLENGE 6 (bonus, NOT graded)
+
+    // 🧠 diceRolls takes no arguments and returns a number
+    // The function throws a six-sided dice until 3 sixes in a row are obtained
+    // The number of throws it took to obtain that third-in-a-row six is then returned from the function
+    // 🌟 HINT: research using `Math.random` to obtain a number from 1 to 6
+    // 🌟 HINT: use `while(true)` to throw the dice indefinitely, but avoid an infinite loop by making sure to break out eventually
+    // 🌟 HINT: you need to keep track of the total number of throws, as well as how many sixes in a row
     function diceRolls() {
-      // 🧠 diceRolls takes no arguments and returns a number
-      // The function throws a six-sided dice until 3 sixes in a row are obtained
-      // The number of throws it took to obtain that third-in-a-row six is then returned from the function
-      // 🌟 HINT: research using `Math.random` to obtain a number from 1 to 6
-      // 🌟 HINT: use `while(true)` to throw the dice indefinitely, but avoid an infinite loop by making sure to break out eventually
-      // 🌟 HINT: you need to keep track of the total number of throws, as well as how many sixes in a row
+      let consecutiveSixes = 0; // To keep track of consecutive sixes
+      let totalThrows = 0; // To keep track of the total number of throws
+
+      while (true) {
+        const roll = Math.floor(Math.random() * 6) + 1;
+
+        totalThrows++;
+
+
+        if (roll === 6) {
+          consecutiveSixes++;
+
+
+          if (consecutiveSixes === 3) {
+            return totalThrows;
+          }
+        } else {
+          consecutiveSixes = 0;
+        }
+      }
     }
+
 
     // 🧪 TESTS, do not make any changes below this line ===================
     // 🧪 TESTS, do not make any changes below this line ===================
